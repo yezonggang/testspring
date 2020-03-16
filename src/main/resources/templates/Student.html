@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student H5</title>
+
+</head>
+
+<body>
+
+<div class="studentDiv">
+    <span>
+
+    </span>
+
+</div>
+
+<script charset="utf-8" src="https://map.qq.com/api/js?v=2.exp&key=NAEBZ-OVLKU-ELLVG-2Q2WU-DC4AE-VKBGM"></script>
+<!--<script type="text/javascript" src="jquery-1.9.1.js"></script>-->
+<script type="text/javascript">
+    function getStudent() {
+        $.ajax({
+            url: "${ctxPath}/testspring/getBaseCompany",
+            success: function (data) {
+                studentJsonArray = eval(data);
+
+                function getStudenFromList() {
+                    for (var i = 0; i < studentJsonArray.length; i++) {
+                        var id = studentJsonArray[i]["id"];
+                        var name = studentJsonArray[i]["name"];
+                        var age = studentJsonArray[i]["age"];
+                        var sex = studentJsonArray[i]["sex"];
+                    }
+
+                }
+
+            }
+
+
+        })
+
+    }
+
+</script>
+
+
+</body>
+</html>
