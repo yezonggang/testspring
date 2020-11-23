@@ -8,19 +8,23 @@
 
 <body>
 
-<div class="studentDiv">
+
     <span>
+        <p id="test">
+
+        </p>
 
     </span>
 
-</div>
 
-<script charset="utf-8" src="https://map.qq.com/api/js?v=2.exp&key=NAEBZ-OVLKU-ELLVG-2Q2WU-DC4AE-VKBGM"></script>
-<!--<script type="text/javascript" src="jquery-1.9.1.js"></script>-->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <!--<script type="text/javascript" src="jquery-1.9.1.js"></script>-->
 <script type="text/javascript">
+    $(document).ready(getStudent());
+
     function getStudent() {
         $.ajax({
-            url: "${ctxPath}/testspring/getBaseCompany",
+            url: "/testspring/getBaseCompany",
             success: function (data) {
                 studentJsonArray = eval(data);
 
@@ -30,6 +34,8 @@
                         var name = studentJsonArray[i]["name"];
                         var age = studentJsonArray[i]["age"];
                         var sex = studentJsonArray[i]["sex"];
+
+                        document.getElementById("test").innerHTML = "Hello World!";
                     }
 
                 }

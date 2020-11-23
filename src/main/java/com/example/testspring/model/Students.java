@@ -1,7 +1,7 @@
 package com.example.testspring.model;
-
 import lombok.Data;
-
+import lombok.Getter;
+import lombok.Setter;
 @Data
 public class Students {
     private int id;

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.testspring.mapper.userMapper.RoleMapper">
+    <resultMap id="ltSysRoleMapLazy" type="com.example.testspring.model.userModel.Role">
+        <id column="role_id" jdbcType="INTEGER" property="roleId"/>
+        <result column="role_code" jdbcType="VARCHAR" property="roleCode"/>
+        <result column="role_name" jdbcType="VARCHAR" property="roleName"/>
+        <result column="role_type" jdbcType="VARCHAR" property="roleType"/>
+        <result column="role_sort" jdbcType="INTEGER" property="roleSort"/>
+        <result column="data_scope" jdbcType="INTEGER" property="dataScope"/>
+        <result column="biz_scope" jdbcType="VARCHAR" property="bizScope"/>
+        <result column="deleted" jdbcType="INTEGER" property="deleted"/>
+        <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
+        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="update_by" jdbcType="VARCHAR" property="updateBy"/>
+        <result column="update_date" jdbcType="TIMESTAMP" property="updateDate"/>
+        <result column="remarks" jdbcType="VARCHAR" property="remarks"/>
+        <result column="corp_id" jdbcType="VARCHAR" property="corpId"/>
+        <!--猜测：column 会传入子查询-->
+        <collection property="users" ofType="com.example.testspring.model.userModel.User" column="user_id"
+                    select="com.example.testspring.mapper.userMapper.UserMapper.findById"/>
+
+    </resultMap>
+    <select id="getListByUserId" resultType="com.example.testspring.model.userModel.Role">
+        SELECT r.role_id,
+        r.role_code,
+        r.role_name,
+        r.role_type,
+        r.role_sort,
+        r.data_scope,
+        r.biz_scope,
+        r.create_by,
+        r.create_date,
+        r.update_by,
+        r.update_date,
+        r.remarks,
+        r.corp_id,
+        ur.user_id
+        FROM lt_sys_role r,
+        lt_sys_user_role ur
+        WHERE r.role_id = ur.role_id
+        and r.deleted = 0
+        and ur.user_id = #{userId}
+        order by r.role_sort asc
+    </select>
+    <select id="findById" resultType="com.example.testspring.model.userModel.Role">
+        SELECT r.role_id,
+        r.role_code,
+        r.role_name,
+        r.role_type,
+        r.role_sort,
+        r.data_scope,
+        r.biz_scope,
+        r.create_by,
+        r.create_date,
+        r.update_by,
+        r.update_date,
+        r.remarks,
+        r.corp_id
+        FROM lt_sys_role r
+        WHERE r.role_id = #{roleId}
+        order by r.role_sort asc
+    </select>
+</mapper>

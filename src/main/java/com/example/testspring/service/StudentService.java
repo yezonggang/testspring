@@ -10,13 +10,10 @@ import java.util.*;
 public class StudentService   {
     @Autowired
     StudentMapper studentMapper;
-
     public List<Students> SelectAll(){
         return studentMapper.SelectAll();
     }
     public Students SelectByID(int id){
         return studentMapper.SelectByID(id);
     }
-
-
 }

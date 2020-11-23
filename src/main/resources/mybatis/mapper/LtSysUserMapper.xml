@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.testspring.mapper.userMapper.UserMapper">
+
+    <resultMap id="ltSysUserMapLazy" type="com.example.testspring.model.userModel.User">
+        <id column="user_id" jdbcType="VARCHAR" property="userId"/>
+        <result column="user_code" jdbcType="VARCHAR" property="userCode"/>
+        <result column="user_name" jdbcType="VARCHAR" property="userName"/>
+        <result column="user_name_en" jdbcType="VARCHAR" property="userNameEn"/>
+        <result column="organ_id" jdbcType="VARCHAR" property="organId"/>
+        <result column="organ_code" jdbcType="VARCHAR" property="organCode"/>
+        <result column="organ_name" jdbcType="VARCHAR" property="organName"/>
+        <result column="email" jdbcType="VARCHAR" property="email"/>
+        <result column="mobile" jdbcType="VARCHAR" property="mobile"/>
+        <result column="phone" jdbcType="VARCHAR" property="phone"/>
+        <result column="sex" jdbcType="INTEGER" property="sex"/>
+        <result column="avatar" jdbcType="VARCHAR" property="avatar"/>
+        <result column="sign" jdbcType="VARCHAR" property="sign"/>
+        <result column="user_sort" jdbcType="INTEGER" property="userSort"/>
+        <result column="status" jdbcType="CHAR" property="status"/>
+        <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
+        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="update_by" jdbcType="VARCHAR" property="updateBy"/>
+        <result column="update_date" jdbcType="TIMESTAMP" property="updateDate"/>
+        <result column="remarks" jdbcType="VARCHAR" property="remarks"/>
+        <result column="corp_code" jdbcType="VARCHAR" property="corpId"/>
+        <result column="reg_date" jdbcType="TIMESTAMP" property="regDate"/>
+        <result column="deleted" jdbcType="BOOLEAN" property="deleted"/>
+        <!--猜测：column 会传入子查询-->
+        <collection property="roles" ofType="com.example.testspring.model.userModel.Role" column="role_id"
+                    select="com.example.testspring.mapper.userMapper.RoleMapper.findById"/>
+
+    </resultMap>
+
+    <select id="getByIdLazy" resultMap="ltSysUserMapLazy">
+        SELECT ur.role_id,
+        u.user_id,
+        u.user_code,
+        u.user_name,
+        u.user_name_en,
+        u.organ_id,
+        u.organ_code,
+        u.organ_name,
+        u.email,
+        u.mobile,
+        u.phone,
+        u.sex,
+        u.avatar,
+        u.sign,
+        u.user_sort,
+        u.status,
+        u.create_by,
+        u.create_date,
+        u.update_by,
+        u.update_date,
+        u.remarks,
+        u.corp_id
+        FROM lt_sys_user_role ur,
+        lt_sys_user u
+        where ur.user_id = u.user_id
+        and u.deleted = 0
+        and u.user_id = #{userId}
+    </select>
+
+
+    <select id="findById" resultType="com.example.testspring.model.userModel.User">
+        SELECT
+        u.user_id,
+        u.user_code,
+        u.user_name,
+        u.user_name_en,
+        u.organ_id,
+        u.organ_code,
+        u.organ_name,
+        u.email,
+        u.mobile,
+        u.phone,
+        u.sex,
+        u.avatar,
+        u.sign,
+        u.user_sort,
+        u.status,
+        u.create_by,
+        u.create_date,
+        u.update_by,
+        u.update_date,
+        u.remarks,
+        u.corp_id
+        FROM lt_sys_user u
+        where u.user_id = #{userId}
+    </select>
+
+
+    <delete id="deleteRoleByUserId">
+       DELETE FROM lt_sys_user_role where user_id = #{userId}
+    </delete>
+
+    <insert id="insertRolesBatch" parameterType="com.example.testspring.model.userModel.UserRole">
+        insert into lt_sys_user_role( user_id,role_id ) values
+        <foreach collection="list" item="item" index="index" separator=",">
+        (#{item.userId},#{item.roleId})
+        </foreach>
+    </insert>
+</mapper>
