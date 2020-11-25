@@ -1,6 +1,4 @@
 package com.example.testspring.controller.user;
-
-
 import com.example.testspring.model.userModel.*;
 import com.example.testspring.req.LightErrorCode;
 import com.example.testspring.req.LightUapException;
@@ -10,23 +8,28 @@ import com.example.testspring.service.userService.AuthServiceImpl;
 import com.example.testspring.service.userService.UserServiceImpl;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.example.testspring.utils.SecurityUtil;
+
+import javax.jws.Oneway;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 import com.example.testspring.utils.BeanConverter;
 import com.example.testspring.utils.LightTokenUtil;
 import com.example.testspring.model.userModel.LightRoleEntity;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+
 @RestController
 @RequestMapping("/user")
 @Api("统一认证管理")
@@ -37,12 +40,14 @@ public class UserController {
     AuthServiceImpl authService;
     @Autowired
     UserServiceImpl userService;
-    @PostMapping("/launcher")
+    @Autowired
+    private HttpSession session;
+
+    @PostMapping("/login")
     @ApiImplicitParam(name = "req", value = "用户登陆信息", dataType = "LoginReq")
     public R login(@RequestBody @NotNull LoginReq req) throws Exception {
         String loginName = req.getLoginName();
         String passwd = req.getPasswd();
-
         Auth info = authService.getByLoginName(loginName);
 
         // 验证用户状态
@@ -88,6 +93,46 @@ public class UserController {
         return jwtToken;
     }
 
+    @ApiOperation("用户刷新认证信息")
+    @PostMapping("/refreshToken")
+    public R refreshToken() throws Exception {
+        RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
+        // 从session中获取,具体查看 cn.com.xcrj.light.uap.interceptor.TokenInterceptor
+        LightUserEntity subject = (LightUserEntity) requestAttributes.getAttribute("USER_INFO", 1);
+        if (subject != null) {
+            Auth info = authService.getByLoginName(subject.getLoginName());
+            // 验证用户状态
+            LambdaQueryWrapper<User> wrapper = Wrappers.<User>lambdaQuery()
+                    .eq(User::getUserId, info.getUserId()).eq(User::getStatus, 0);
+            User ltSysUser = userService.getOne(wrapper);
+            Assert.notNull(ltSysUser, "用户已禁用, 请联系管理员");
+            // 封装 Token
+            String jwtToken = generateByUserInfo(info);
+            return R.ok(jwtToken);
+        }
+        else {
+            throw new LightUapException(LightErrorCode.FORBIDDEN);
+        }
+    }
+
+    @GetMapping("/info")
+    @ApiOperation("获取当前登陆的用户信息")
+    public R getUserInfo() {
+        LightUserEntity lightUserEntity = (LightUserEntity) session.getAttribute("USER_INFO");
+        if (lightUserEntity == null) {
+            throw new LightUapException("用户没有登录，请先登录");
+        }
+        // 由于之前token没有携带头像信息，现在补上
+        User ltSysUser = userService.getById(lightUserEntity.getUserId());
+        lightUserEntity.setAvatar(ltSysUser.getAvatar());
+        return R.ok(lightUserEntity);
+    }
+
+    //
+    @GetMapping("/logout")
+    public R login() {
+        return R.ok("退出登录");
+    }
 
 }
 

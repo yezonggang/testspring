@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @ApiModel(value = "LtSysUserAuth对象", description = "用户认证信息表")
-public class Auth  extends BaseEntity {
+public class Auth extends BaseEntity {
 
     public static final String DEFAULT_PASSWORD = "123456";
     @ApiModelProperty(value = "账户id")

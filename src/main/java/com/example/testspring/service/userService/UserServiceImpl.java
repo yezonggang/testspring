@@ -29,6 +29,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return ltSysUser;
     }
 
+
     @Override
     public boolean saveRoleIdsByUserId(String userId, List<String> roleIds) {
         UserMapper.deleteRoleByUserId(userId);
@@ -37,5 +38,4 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }).collect(Collectors.toList());
         return UserMapper.insertRolesBatch(list);
     }
-
 }
