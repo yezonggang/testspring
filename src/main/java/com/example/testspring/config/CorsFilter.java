@@ -10,9 +10,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebFilter(filterName = "CORSFilter", urlPatterns = {"/*"})
-@Order(value = 1)
-@Configuration
+//@WebFilter(filterName = "CORSFilter", urlPatterns = {"/*"})
+//@Order(value = 1)
+//@Configuration
 public class CorsFilter implements Filter {
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -25,7 +25,7 @@ public class CorsFilter implements Filter {
         // 响应标头指定 指定可以访问资源的URI路径
         response.setHeader("Access-Control-Allow-Origin", "http://localhost:9527");
         //响应标头指定响应访问所述资源到时允许的一种或多种方法
-        response.setHeader("Access-Control-Allow-Methods", "*");
+        response.setHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT,OPTION,OPTIONS");
         //设置 缓存可以生存的最大秒数
         response.setHeader("Access-Control-Max-Age", "36000");
         //设置  受支持请求标头

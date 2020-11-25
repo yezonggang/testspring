@@ -129,7 +129,7 @@ public class UserController {
     }
 
     //
-    @GetMapping("/logout")
+    @PostMapping("/logout")
     public R login() {
         return R.ok("退出登录");
     }
