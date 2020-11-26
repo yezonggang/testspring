@@ -17,9 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.example.testspring.utils.SecurityUtil;
-
-import javax.jws.Oneway;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.constraints.NotNull;
 import java.util.List;
